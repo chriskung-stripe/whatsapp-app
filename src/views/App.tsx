@@ -1,8 +1,7 @@
 import { Box, Button, ContextView, Inline, Link, Select } from "@stripe/ui-extension-sdk/ui";
 import type { ExtensionContextValue } from "@stripe/ui-extension-sdk/context";
 
-import BrandIcon from "./brand_icon.svg";
-import { TextField } from "@stripe/ui-extension-sdk/ui/@sail/ui";
+import BrandIcon from "./whatsapp_icon.svg";
 
 /**
  * This is a view that is rendered in the Stripe dashboard's customer detail page.
@@ -12,7 +11,7 @@ import { TextField } from "@stripe/ui-extension-sdk/ui/@sail/ui";
 const App = ({ userContext, environment }: ExtensionContextValue) => {
   return (
     <ContextView
-      title="Send checkout link"
+      title="Whazzapp!"
       brandColor="#F6F8FA" // replace this with your brand color
       brandIcon={BrandIcon} // replace this with your brand icon
     >
