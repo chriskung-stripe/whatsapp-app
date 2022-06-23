@@ -1,4 +1,4 @@
-import { Box, Button, ContextView, Inline, Link, Select, TextField } from "@stripe/ui-extension-sdk/ui";
+import { Accordion, AccordionItem, Box, Badge, Button, ContextView, Divider, Inline, Link, Select, Table, TableHead, TableHeaderCell, TextField, TableRow, TableBody, TableCell } from "@stripe/ui-extension-sdk/ui";
 import type { ExtensionContextValue } from "@stripe/ui-extension-sdk/context";
 
 import BrandIcon from "./whatsapp_icon.svg";
@@ -12,33 +12,90 @@ const App = ({ userContext, environment }: ExtensionContextValue) => {
   return (
     <ContextView
       title="Whazzapp!"
-      brandColor="#F6F8FA" // replace this with your brand color
+      brandColor="#2db843" // replace this with your brand color
       brandIcon={BrandIcon} // replace this with your brand icon
     >
       
+    <TextField
+    label="Product Name"
+    name="productName"
+    placeholder="Whazzapp!"
+    />  
+  
+    <Box
+    css={{
+      stack: 'x',
+      gap:'medium',
+      
+      alignX:'start',
+    }}>
+    <Box css={{width:'3/4', paddingTop:'medium' }}>  
     <TextField
     label="Amount"
     name="amount"
     placeholder="100"
     />
-
-      <Select
+</Box>
+<Box css={{paddingTop:'medium' }}>  
+<Select
         name="currency"
         label="Currency"
         >
-          <option value="aud">Australian Dollar</option>
-          <option value="sgd">Singapore Dollar</option>
-          <option value="usd">US Dollar</option>
+          <option value="aud">AUD</option>
+          <option value="sgd">SGD</option>
+          <option value="usd">USD</option>
           </Select>
+</Box>
+</Box>
+     
        <TextField
+       css={{ paddingTop:'medium' }}
     label="Phone Number"
     name="phone"
+    type="tel"
     placeholder="+614123456789"
     />
-        <Button type ="primary" name="submit" css={{width: 'fill', alignX: 'center'}} onPress={()=>console.log(`Submit Button Pressed`)}>Send</Button>
-     
+        <Button type ="primary" name="submit" css={{width: 'fill', alignX: 'center', marginTop:'medium'}} onPress={()=>console.log(`Submit Button Pressed`)}>Send</Button>
+   
+    <Table css={{marginTop:"medium"}}>
+      <TableHead>
+        <TableRow>
+          <TableHeaderCell>Payment Date</TableHeaderCell>
+          <TableHeaderCell>Amount</TableHeaderCell>
+          <TableHeaderCell>Status</TableHeaderCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        <TableRow>
+          <TableCell>22 Jun 22</TableCell>
+          <TableCell>$44.00</TableCell>
+          <TableCell><Badge type='neutral'>Sent</Badge></TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>21 Jun 22</TableCell>
+          <TableCell>$12.00</TableCell>
+          <TableCell><Badge type='info'>Read</Badge></TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>18 Jun 22</TableCell>
+          <TableCell>$22.22</TableCell>
+          <TableCell><Badge type='positive'>Paid</Badge></TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>15 Jun 22</TableCell>
+          <TableCell>$499.00</TableCell>
+          <TableCell><Badge type='negative'>Expired</Badge></TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>1 Jun 22</TableCell>
+          <TableCell>$24.82</TableCell>
+          <TableCell><Badge type='urgent'>Error</Badge></TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
       
     </ContextView>
+    
   );
 };
 
