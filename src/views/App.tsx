@@ -1,4 +1,4 @@
-import { Box, Button, ContextView, Inline, Link, Select } from "@stripe/ui-extension-sdk/ui";
+import { Box, Button, ContextView, Inline, Link, Select, TextField } from "@stripe/ui-extension-sdk/ui";
 import type { ExtensionContextValue } from "@stripe/ui-extension-sdk/context";
 
 import BrandIcon from "./whatsapp_icon.svg";
@@ -16,12 +16,12 @@ const App = ({ userContext, environment }: ExtensionContextValue) => {
       brandIcon={BrandIcon} // replace this with your brand icon
     >
       
-      <TextField
-        name="amount"
-        label="Amount"
-        placeholder="100"
-        />
-      
+    <TextField
+    label="Amount"
+    name="amount"
+    placeholder="100"
+    />
+
       <Select
         name="currency"
         label="Currency"
@@ -30,11 +30,11 @@ const App = ({ userContext, environment }: ExtensionContextValue) => {
           <option value="sgd">Singapore Dollar</option>
           <option value="usd">US Dollar</option>
           </Select>
-        <TextField
-        name="phone"
-        label="Phone Number"
-        placeholder="+614123456789"
-        />
+       <TextField
+    label="Phone Number"
+    name="phone"
+    placeholder="+614123456789"
+    />
         <Button type ="primary" name="submit" css={{width: 'fill', alignX: 'center'}} onPress={()=>console.log(`Submit Button Pressed`)}>Send</Button>
      
       
