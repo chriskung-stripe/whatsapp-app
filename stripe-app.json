@@ -3,7 +3,16 @@
   "version": "0.0.1",
   "name": "Whatsapp Connector",
   "icon": "",
-  "permissions": [],
+  "permissions": [
+    {
+      "permission": "customer_read",
+      "purpose": "so we can message them"
+    },
+    {
+      "permission": "checkout_session_write",
+      "purpose": "create checkout for wa"
+    }
+  ],
   "app_backend": {
     "webhooks": null
   },
@@ -16,9 +25,11 @@
     ],
     "actions": [],
     "content_security_policy": {
-      "connect-src": null,
+      "connect-src": [
+        "https://whaddup-stripe-app.glitch.me/api/"
+      ],
       "image-src": null,
-      "purpose": ""
+      "purpose": "glitch service"
     }
   },
   "post_install_action": null
