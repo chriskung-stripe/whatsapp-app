@@ -1,4 +1,4 @@
-import { Accordion, AccordionItem, Box, Badge, Button, ContextView, Divider, Inline, Link, Select, Table, TableHead, TableHeaderCell, TextField, TableRow, TableBody, TableCell } from "@stripe/ui-extension-sdk/ui";
+import { Icon, Accordion, AccordionItem, Box, Badge, Button, ContextView, Divider, Inline, Link, Select, Table, TableHead, TableHeaderCell, TextField, TableRow, TableBody, TableCell } from "@stripe/ui-extension-sdk/ui";
 import type { ExtensionContextValue } from "@stripe/ui-extension-sdk/context";
 
 import BrandIcon from "./whatsapp_icon.svg";
@@ -69,22 +69,22 @@ const App = ({ userContext, environment }: ExtensionContextValue) => {
         <TableRow>
           <TableCell>22 Jun 22</TableCell>
           <TableCell>$44.00</TableCell>
-          <TableCell><Badge type='neutral'>Sent</Badge></TableCell>
+          <TableCell><Badge type='neutral'>Sent</Badge> <Icon name="paymentLink" size='medium' css={{paddingLeft:"small"}}/></TableCell>
         </TableRow>
         <TableRow>
           <TableCell>21 Jun 22</TableCell>
           <TableCell>$12.00</TableCell>
-          <TableCell><Badge type='info'>Read</Badge></TableCell>
+          <TableCell><Badge type='info'>Read</Badge><Icon name="paymentLink" size='medium' css={{paddingLeft:"small"}}/></TableCell>
         </TableRow>
         <TableRow>
           <TableCell>18 Jun 22</TableCell>
           <TableCell>$22.22</TableCell>
-          <TableCell><Badge type='positive'>Paid</Badge></TableCell>
+          <TableCell><Badge type='positive'>Paid</Badge><Icon name="paymentLink" size='medium' css={{paddingLeft:"small"}}/></TableCell>
         </TableRow>
         <TableRow>
           <TableCell>15 Jun 22</TableCell>
           <TableCell>$499.00</TableCell>
-          <TableCell><Badge type='negative'>Expired</Badge></TableCell>
+          <TableCell><Badge type='negative'>Expired</Badge><Icon name="paymentLink" size='medium' css={{paddingLeft:"small"}}/></TableCell>
         </TableRow>
         <TableRow>
           <TableCell>1 Jun 22</TableCell>
