@@ -2,7 +2,7 @@
   "id": "com.stripe.whatsapp-comms",
   "version": "0.0.1",
   "name": "Whatsapp Connector",
-  "icon": "",
+  "icon": "./whatsapp_icon.svg",
   "permissions": [],
   "app_backend": {
     "webhooks": null
