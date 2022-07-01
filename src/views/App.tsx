@@ -115,7 +115,7 @@ const App = ({ userContext, environment }: ExtensionContextValue) => {
       <Table css={{ marginTop: "medium" }}>
         <TableHead>
           <TableRow>
-            <TableHeaderCell>Payment Date</TableHeaderCell>
+            <TableHeaderCell>Date</TableHeaderCell>
             <TableHeaderCell>Amount</TableHeaderCell>
             <TableHeaderCell>Status</TableHeaderCell>
           </TableRow>
