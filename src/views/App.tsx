@@ -24,13 +24,16 @@ const PRICE_ID = "price_1LDiupLqJpnKpuHTHiMArnYA";
  */
 const App = ({ userContext, environment }: ExtensionContextValue) => {
   const [customer, setCustomer] = useState();
+  const [description, setDescription] = useState();
+  const [amount, setAmount] = useState();
+  const [currency, setCurrency] = useState();
 
   const submitHandler = async () => {
     const session = await stripe.checkout.sessions.create({
       success_url: CHECKOUT_SUCCESS_URL,
       cancel_url: CHECKOUT_CANCEL_URL,
       line_items: [
-        {price: PRICE_ID, quantity: 1},
+        { price: PRICE_ID, quantity: 1 },
       ],
       customer: customer.id!,
       mode: 'payment',
@@ -40,7 +43,8 @@ const App = ({ userContext, environment }: ExtensionContextValue) => {
 
     await fetch(BACKEND_URL, {
       body: JSON.stringify({
-        customerId: customer.id!
+        customerId: customer.id!,
+        paymentLinkUrl: session.url,
       }),
       headers: {
         "Content-Type": "application/json",
@@ -71,9 +75,10 @@ const App = ({ userContext, environment }: ExtensionContextValue) => {
     >
 
       <TextField
-        label="Product Name"
-        name="productName"
+        label="Payment Description"
+        name="paymentName"
         placeholder="Whazzapp!"
+        onChange={(e) => { setDescription(e.target.value) }}
       />
 
       <Box
@@ -88,6 +93,7 @@ const App = ({ userContext, environment }: ExtensionContextValue) => {
             label="Amount"
             name="amount"
             placeholder="100"
+            onChange={(e) => { setAmount(parseInt(e.target.value)) }}
           />
         </Box>
         <Box css={{ paddingTop: 'medium' }}>
