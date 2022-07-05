@@ -44,7 +44,27 @@ const App = ({ userContext, environment }: ExtensionContextValue) => {
     await fetch(BACKEND_URL, {
       body: JSON.stringify({
         customerId: customer.id!,
-        paymentLinkUrl: session.url,
+        event: "Payment Link Sent",
+        template: {
+          name: 'stripe_payment_link_3',
+          language: { code: "en" },
+          components: [
+            {
+              type: "button",
+              sub_type: "url",
+              index: 0,
+              parameters: [
+                {
+                  type: "text",
+                  text: session.url.replace(
+                    "https://checkout.stripe.com/pay/",
+                    ""
+                  ),
+                },
+              ],
+            },
+          ],
+        }
       }),
       headers: {
         "Content-Type": "application/json",
