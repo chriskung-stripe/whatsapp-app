@@ -13,9 +13,13 @@ const stripe = new Stripe(STRIPE_API_KEY, {
 })
 
 const BACKEND_URL = "https://whaddup-stripe-app.glitch.me/api/messages";
+const PRICES_BE_URL = "https://whaddup-stripe-app.glitch.me/api/prices";
 const CHECKOUT_SUCCESS_URL = 'https://whaddup-stripe-app.glitch.me/checkout/success';
 const CHECKOUT_CANCEL_URL = 'https://whaddup-stripe-app.glitch.me/checkout/cancel';
 const PRICE_ID = "price_1LDiupLqJpnKpuHTHiMArnYA";
+
+const REFRESH_INTERVAL = 3000;
+const PAYMENT_LINK_WA_TEMPLATE = "stripe_payment_link_3";
 
 /**
  * This is a view that is rendered in the Stripe dashboard's customer detail page.
@@ -24,29 +28,27 @@ const PRICE_ID = "price_1LDiupLqJpnKpuHTHiMArnYA";
  */
 const App = ({ userContext, environment }: ExtensionContextValue) => {
   const [customer, setCustomer] = useState();
-  const [description, setDescription] = useState();
-  const [amount, setAmount] = useState();
-  const [currency, setCurrency] = useState();
+  const [ledger, setLedger] = useState([]);
+  const [prices, setPrices] = useState([]);
+  const [selectedPrice, setSelectedPrice] = useState();
 
   const submitHandler = async () => {
     const session = await stripe.checkout.sessions.create({
       success_url: CHECKOUT_SUCCESS_URL,
       cancel_url: CHECKOUT_CANCEL_URL,
       line_items: [
-        { price: PRICE_ID, quantity: 1 },
+        { price: selectedPrice, quantity: 1 },
       ],
       customer: customer.id!,
       mode: 'payment',
     });
-
-    console.log(session);
 
     await fetch(BACKEND_URL, {
       body: JSON.stringify({
         customerId: customer.id!,
         event: "Payment Link Sent",
         template: {
-          name: 'stripe_payment_link_3',
+          name: PAYMENT_LINK_WA_TEMPLATE,
           language: { code: "en" },
           components: [
             {
@@ -75,17 +77,48 @@ const App = ({ userContext, environment }: ExtensionContextValue) => {
   }
 
   useEffect(() => {
-    const fetchCustomer = async () => {
+    const fetchData = async () => {
       try {
-        const fetchedCustomer = await stripe.customers.retrieve(environment.objectContext!.id!);
+        const [fetchedCustomer, fetchedPrices] = await Promise.all([
+          stripe.customers.retrieve(environment.objectContext!.id!),
+          fetch(PRICES_BE_URL, {
+            headers: {
+              "Content-Type": "application/json",
+              "Accept": "application/json"
+            }
+          }).then((resp) => resp.json())
+        ])
+
         setCustomer(fetchedCustomer);
+        setPrices(fetchedPrices);
       } catch (error) {
         console.log("Error fetching setting: ", error);
       }
     };
 
-    fetchCustomer();
+    fetchData();
   }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const fetchLedger = await fetch(BACKEND_URL, {
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        }
+      });
+      setLedger(await fetchLedger.json());
+    }
+
+    const intervalId = setInterval(async () => {  //assign interval to a variable to clear it.
+      await fetchData();
+    }, REFRESH_INTERVAL);
+
+    fetchData();
+
+    return () => clearInterval(intervalId); //This is important
+
+  }, [])
 
   return (
     <ContextView
@@ -93,85 +126,73 @@ const App = ({ userContext, environment }: ExtensionContextValue) => {
       brandColor="#2db843" // replace this with your brand color
       brandIcon={BrandIcon} // replace this with your brand icon
     >
+      <Box css={{ weight: 400 }}>Sending to:</Box>
+      <Box css={{ fontSize: "2em", weight: 400, paddingBottom: 'medium' }}>{customer ? customer.phone : "...loading"}</Box>
+      <Select
+        name="priceId"
+        label="Select the Product &amp; Price"
+        onChange={(e) => {
+          setSelectedPrice(e.target.value);
+        }}
+      >
+        <option value="">Choose an option</option>
+        {prices.map((price, index) => {
+          const displayPrice = new Intl.NumberFormat('en-US', { style: 'currency', currency: price.currency.toUpperCase() }).format(price.unit_amount / 100)
+          return (
+            <option key={index} value={price.id}>{price.product.name + " - " + displayPrice}</option>
+          )
+        })}
+      </Select>
 
-      <TextField
-        label="Payment Description"
-        name="paymentName"
-        placeholder="Whazzapp!"
-        onChange={(e) => { setDescription(e.target.value) }}
-      />
-
-      <Box
-        css={{
-          stack: 'x',
-          gap: 'medium',
-
-          alignX: 'start',
-        }}>
-        <Box css={{ width: '3/4', paddingTop: 'medium' }}>
-          <TextField
-            label="Amount"
-            name="amount"
-            placeholder="100"
-            onChange={(e) => { setAmount(parseInt(e.target.value)) }}
-          />
-        </Box>
-        <Box css={{ paddingTop: 'medium' }}>
-          <Select
-            name="currency"
-            label="Currency"
-          >
-            <option value="aud">AUD</option>
-            <option value="sgd">SGD</option>
-            <option value="usd">USD</option>
-          </Select>
-        </Box>
-      </Box>
-
-      <TextField
-        css={{ paddingTop: 'medium' }}
-        label="Phone Number"
-        name="phone"
-        type="tel"
-        placeholder="+614123456789"
-        value={customer ? customer.phone : ""}
-      />
-      <Button type="primary" name="submit" css={{ width: 'fill', alignX: 'center', marginTop: 'medium' }} onPress={submitHandler}>Send</Button>
+      <Button type="primary" name="submit" css={{ width: 'fill', alignX: 'center', marginTop: 'medium' }} onPress={submitHandler}>Send Checkout Link</Button>
 
       <Table css={{ marginTop: "medium" }}>
         <TableHead>
           <TableRow>
+            <TableHeaderCell>Message</TableHeaderCell>
             <TableHeaderCell>Date</TableHeaderCell>
-            <TableHeaderCell>Amount</TableHeaderCell>
             <TableHeaderCell>Status</TableHeaderCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          <TableRow>
-            <TableCell>22 Jun 22</TableCell>
-            <TableCell>$44.00</TableCell>
-            <TableCell><Badge type='neutral'>Sent</Badge> <Icon name="paymentLink" size='medium' css={{ paddingLeft: "small" }} /></TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell>21 Jun 22</TableCell>
-            <TableCell>$12.00</TableCell>
-            <TableCell><Badge type='info'>Read</Badge><Icon name="paymentLink" size='medium' css={{ paddingLeft: "small" }} /></TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell>18 Jun 22</TableCell>
-            <TableCell>$22.22</TableCell>
-            <TableCell><Badge type='positive'>Paid</Badge><Icon name="paymentLink" size='medium' css={{ paddingLeft: "small" }} /></TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell>15 Jun 22</TableCell>
-            <TableCell>$499.00</TableCell>
-            <TableCell><Badge type='negative'>Expired</Badge><Icon name="paymentLink" size='medium' css={{ paddingLeft: "small" }} /></TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell>1 Jun 22</TableCell>
-            <TableCell>$24.82</TableCell>
-            <TableCell><Badge type='urgent'>Error</Badge></TableCell>
-          </TableRow>
+          {ledger && ledger.map((item) => {
+            let badgeType;
+
+            switch (item.status) {
+              case "read":
+                badgeType = "positive";
+                break;
+
+              case "delivered":
+                badgeType = "info";
+                break;
+
+              case "sent":
+                badgeType = "warning";
+                break;
+
+              case "failed":
+                badgeType = "negative";
+                break;
+
+              default:
+                badgeType = "neutral";
+                break;
+            }
+
+            const createdAtDisplay = new Intl.DateTimeFormat('en-US',
+              { dateStyle: 'short', timeStyle: 'short' }).format(Date.parse(item.createdAt)
+              );
+
+            return (
+              <TableRow key={item.id}>
+                <TableCell>{item.event}</TableCell>
+                {/* <TableCell>{item.createdAt}</TableCell> */}
+                <TableCell>{createdAtDisplay}</TableCell>
+                <TableCell><Badge type={badgeType}>{item.status}</Badge></TableCell>
+              </TableRow>
+            )
+          })}
         </TableBody>
       </Table>
 
