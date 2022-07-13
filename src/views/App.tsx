@@ -101,7 +101,7 @@ const App = ({ userContext, environment }: ExtensionContextValue) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const fetchLedger = await fetch(BACKEND_URL, {
+      const fetchLedger = await fetch(BACKEND_URL + `?customerId=${environment.objectContext!.id!}`, {
         headers: {
           "Content-Type": "application/json",
           "Accept": "application/json"
