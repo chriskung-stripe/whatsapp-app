@@ -59,7 +59,7 @@ const App = ({ userContext, environment }: ExtensionContextValue) => {
                 {
                   type: "text",
                   text: session.url.replace(
-                    "https://checkout.stripe.com/pay/",
+                    "https://checkout.stripe.com/c/pay/",
                     ""
                   ),
                 },
