@@ -14,7 +14,7 @@ const stripe = new Stripe(STRIPE_API_KEY, {
 
 const BACKEND_URL = "https://whaddup-stripe-app.glitch.me/api/messages";
 const PRICES_BE_URL = "https://whaddup-stripe-app.glitch.me/api/prices";
-const CHECKOUT_SUCCESS_URL = 'https://whaddup-stripe-app.glitch.me/checkout/success';
+const CHECKOUT_SUCCESS_URL = 'https://snow-copper-jingle.glitch.me/';
 const CHECKOUT_CANCEL_URL = 'https://whaddup-stripe-app.glitch.me/checkout/cancel';
 const PRICE_ID = "price_1LDiupLqJpnKpuHTHiMArnYA";
 
